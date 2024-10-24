@@ -10,4 +10,4 @@ In this app, users can sign up, add friends, join groups, and have private conve
 
 * Nuh Al-Sharafi
 
-* 
+* Ali Ishtay
