@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
+import java.util.Map;
 
 @AllArgsConstructor
 @Data
@@ -11,8 +12,8 @@ import java.util.List;
 public class UserModel{
     private String email;
     private String password;
-    private String username;
+    private String lastname;
     private String name;
-    private List<UserModel>friends;
+    private List<Map<UserModel,String>>friends;
     private String aboutme;
 }
