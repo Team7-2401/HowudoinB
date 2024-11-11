@@ -4,6 +4,7 @@ import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
 
 @RestController
 public class UserController {
@@ -11,18 +12,28 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 
-	@GetMapping("/user/{id}")
-	public UserModel getUserById(@PathVariable int id) {
-	return userService.getUserById(id);
+	@PostMapping("/register")
+	public int registerUser(@Valid @RequestBody UserModel user) {
+		return userService.; //TODO: Implement this method
 	}
 
-	@PostMapping("/user")
-	public UserModel saveUser(@RequestBody UserModel user) {
-	return userService.saveUser(user);
+	@PostMapping("/login")
+	public UserModel loginUser(@Valid @RequestBody UserModel user) {
+		return userService.getUser(user);
 	}
 
-	@DeleteMapping("/user/{id}")
-	public void deleteUser(@PathVariable int id) {
-	userService.deleteUser(id);
+	@PostMapping("/friends/add")
+	public UserModel addFriend(@Valid @RequestBody UserModel user) {
+		return userService.saveUser(user);
+	}
+
+	@PostMapping("/friends/accept")
+	public UserModel acceptFriend(@Valid @RequestBody UserModel user) {
+		return userService.saveUser(user);
+	}
+
+	@GetMapping("/friends")
+	public UserModel getFriends() {
+		return userService.getFriends();
 	}
 }

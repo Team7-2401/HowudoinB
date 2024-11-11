@@ -11,18 +11,13 @@ public class MessageController {
 	@Autowired
 	private MessageService messageService;
 
-	@GetMapping("/message/{id}")
-	public MessageModel getMessageById(@PathVariable int id) {
-	return messageService.getMessageById(id);
+	@PostMapping("/messages/send")
+	public MessageModel sendMessage(@RequestBody MessageModel message) {
+		return messageService.saveMessage(message);
 	}
 
-	@PostMapping("/message")
-	public MessageModel saveMessage(@RequestBody MessageModel message) {
-	return messageService.saveMessage(message);
-	}
-
-	@DeleteMapping("/message/{id}")
-	public void deleteMessage(@PathVariable int id) {
-	messageService.deleteMessage(id);
+	@GetMapping("/messages")
+	public MessageModel getMessages() {
+		return messageService.getMessages();
 	}
 }

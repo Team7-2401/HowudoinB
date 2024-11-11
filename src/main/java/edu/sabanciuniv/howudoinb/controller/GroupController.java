@@ -11,18 +11,28 @@ public class GroupController {
 	@Autowired
 	private GroupService groupService;
 
-	@GetMapping("/group/{id}")
-	public GroupModel getGroupById(@PathVariable int id) {
-	return groupService.getGroupById(id);
+	@PostMapping("/groups/create")
+	public GroupModel createGroup(@RequestBody GroupModel group) {
+		return groupService.saveGroup(group);
 	}
 
-	@PostMapping("/group")
-	public GroupModel saveGroup(@RequestBody GroupModel group) {
-	return groupService.saveGroup(group);
+	@PostMapping("/groups/{groupId}/add-member")
+	public GroupModel addMember(@PathVariable int groupId, @RequestBody GroupModel group) {
+		return groupService.saveGroup(group);
 	}
 
-	@DeleteMapping("/group/{id}")
-	public void deleteGroup(@PathVariable int id) {
-	groupService.deleteGroup(id);
+	@PostMapping("/groups/{groupId}/send")
+	public GroupModel sendMessage(@PathVariable int groupId, @RequestBody GroupModel group) {
+		return groupService.saveGroup(group);
+	}
+
+	@GetMapping("/groups/{groupId}/messages")
+	public GroupModel getMessages(@PathVariable int groupId) {
+		return groupService.getGroupById(groupId);
+	}
+
+	@GetMapping("/groups/{groupId}/members")
+	public GroupModel getMembers(@PathVariable int groupId) {
+		return groupService.getGroupById(groupId);
 	}
 }
