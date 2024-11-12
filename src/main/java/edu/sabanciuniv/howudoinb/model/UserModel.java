@@ -37,4 +37,18 @@ public class UserModel{
         }
         return 0;
     }
+
+    public int loginValidate(){
+        if(this.email == null || this.email.isEmpty()){
+            return 3;
+        }
+        //check email format with regex
+        else if(!this.email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")){
+            return 4;
+        }
+        if(this.password == null || this.password.isEmpty() || this.password.length() < 8){
+            return 5;
+        }
+        return 0;
+    }
 }

@@ -14,6 +14,8 @@ public class UserController {
 
 	@PostMapping("/register")
 	public int registerUser(@RequestBody UserModel user) {
+
+		//Can a recently registered user have friends on registration?
 		int validationResponse = user.validateUser();
 		if(validationResponse == 0){
 			return userService.registerUser(user);
@@ -24,22 +26,27 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public UserModel loginUser(@RequestBody UserModel user) {
-		return userService.getUser(user);
+	public String loginUser(@RequestBody UserModel user) {
+		int validationResponse = user.loginValidate();
+		if(validationResponse == 0){
+			return userService.verifyUser(user);
+		}
+		return "failed to validate user";
 	}
 
 	@PostMapping("/friends/add")
-	public UserModel addFriend(@RequestBody UserModel user) {
-		return userService.saveUser(user);
+	public int addFriend(@RequestBody UserModel user) {
+		//who adds who though? TODO
+		return userService.addFriend(user);
 	}
 
-	@PostMapping("/friends/accept")
-	public UserModel acceptFriend(@RequestBody UserModel user) {
-		return userService.saveUser(user);
-	}
-
-	@GetMapping("/friends")
-	public UserModel getFriends() {
-		return userService.getFriends();
-	}
+//	@PostMapping("/friends/accept")
+//	public UserModel acceptFriend(@RequestBody UserModel user) {
+//		return userService.saveUser(user);
+//	}
+//
+//	@GetMapping("/friends")
+//	public UserModel getFriends() {
+//		return userService.getFriends();
+//	}
 }
