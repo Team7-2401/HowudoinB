@@ -11,6 +11,12 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepository;
 
+	public int registerUser(UserModel user) {
+		/* function adds user to database */
+		userRepository.save(user);
+		return 0;
+	}
+
 	public UserModel getUserById(int id) {
 	return userRepository.findById(id).orElse(null);
 	}
