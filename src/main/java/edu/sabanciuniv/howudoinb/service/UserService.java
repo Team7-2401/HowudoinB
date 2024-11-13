@@ -1,5 +1,6 @@
 package edu.sabanciuniv.howudoinb.service;
 
+import edu.sabanciuniv.howudoinb.model.FriendModel;
 import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +8,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService {
@@ -44,17 +48,36 @@ public class UserService {
 		return jwtService.extractUserName(token);
 	}
 
-	public int addFriend(UserModel user) {
-//		/* function adds friend to user's friend list */
-//		List<UserModel> userFromDB = userRepository.findByEmail(user.getEmail());
-//		if (userFromDB != null && userFromDB.size() == 1) {
-//			UserModel userDB = userFromDB.getFirst();
-//			userDB.getFriends().add(user.getFriends().get(0));
-//			userRepository.save(userDB);
-//			return 0;
-//		}
+	public String addFriend(UserModel user, String email){
+		List<UserModel> usersFromDB = userRepository.findByEmail(user.getEmail());
+		if (usersFromDB == null || usersFromDB.size() != 1) {
+			return "Friend not found";
+		}
+		UserModel userFromDB = usersFromDB.getFirst(); //friend
+
+		List<UserModel> usersFromDB2 = userRepository.findByEmail(email);
+		UserModel userFromDB2 = usersFromDB2.getFirst();
+
+		ArrayList<FriendModel> userFriends = userFromDB2.getFriends();
+		ArrayList<FriendModel> friendFriends = userFromDB.getFriends();
+
+		//add each email to the other user's friends list with status pending
+		FriendModel newFriend = new FriendModel();
+		newFriend.setEmail(userFromDB.getEmail());
+		newFriend.setStatus("pending");
+		userFriends.add(newFriend);
+
+		FriendModel newFriend2 = new FriendModel();
+		newFriend2.setEmail(userFromDB2.getEmail());
+		newFriend2.setStatus("pending");
+		friendFriends.add(newFriend2);
+		// Update both users' friends list in the repository
+		userRepository.updateFriendsByEmail(userFromDB.getEmail(), friendFriends);
+		userRepository.updateFriendsByEmail(userFromDB2.getEmail(), userFriends);
+		return "Friend request sent";
+		/* function adds friend to user's friend list */
 		//TODO: add friend request to both users' friends with appropriate status
-		return -1;
+//		return -1;
 	}
 
 	//TODO function for friends accept
