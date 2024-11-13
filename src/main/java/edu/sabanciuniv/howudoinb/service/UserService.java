@@ -40,6 +40,10 @@ public class UserService {
 		}
 	}
 
+	public String whoSent(String token) {
+		return jwtService.extractUserName(token);
+	}
+
 	public int addFriend(UserModel user) {
 //		/* function adds friend to user's friend list */
 //		List<UserModel> userFromDB = userRepository.findByEmail(user.getEmail());
@@ -49,8 +53,16 @@ public class UserService {
 //			userRepository.save(userDB);
 //			return 0;
 //		}
+		//TODO: add friend request to both users' friends with appropriate status
 		return -1;
 	}
+
+	//TODO function for friends accept
+	//TODO check that the friend request is in the friends list
+	//TODO change status on both sender and receiver to accepted
+
+	//TODO function for return friend list
+	//TODO go repository, find by email, find first and last names, return friends list (names) (only the accepted friends)
 
 //	public UserModel getUserById(int id) {
 //	return userRepository.findById(id).orElse(null);

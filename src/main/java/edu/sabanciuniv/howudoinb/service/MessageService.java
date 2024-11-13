@@ -11,15 +11,20 @@ public class MessageService {
 	@Autowired
 	private MessageRepository messageRepository;
 
-	public MessageModel getMessageById(int id) {
-	return messageRepository.findById(id).orElse(null);
-	}
+//	public String sendMessage(MessageModel message) {
+	//TODO set current time (overwrite)
+	// TODO add message to database,
+//	}
 
-	public MessageModel saveMessage(MessageModel message) {
-	return messageRepository.save(message);
-	}
-
-	public void deleteMessage(int id) {
-	messageRepository.deleteById(id);
-	}
+//	public MessageModel getMessageById(int id) {
+//	return messageRepository.findById(id).orElse(null);
+//	}
+//
+//	public MessageModel saveMessage(MessageModel message) {
+//	return messageRepository.save(message);
+//	}
+//
+//	public void deleteMessage(int id) {
+//	messageRepository.deleteById(id);
+//	}
 }

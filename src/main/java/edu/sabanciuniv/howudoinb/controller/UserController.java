@@ -1,9 +1,12 @@
 package edu.sabanciuniv.howudoinb.controller;
 
+import edu.sabanciuniv.howudoinb.model.FriendModel;
 import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
 
 
 @RestController
@@ -34,19 +37,28 @@ public class UserController {
 		return "failed to validate user";
 	}
 
-	@PostMapping("/friends/add")
-	public int addFriend(@RequestBody UserModel user) {
-		//who adds who though? TODO
-		return userService.addFriend(user);
+@PostMapping("/friends/add")
+public String addFriend(@RequestHeader("Authorization") String token, @RequestBody UserModel user) {
+
+	// Extract the token if it contains a prefix like "Bearer "
+    String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+	String email =  userService.whoSent(actualToken);
+
+	//TODO: verify passed user object (it must contain email)
+    // TODO: pass verified object to userService to add friend request
+	// TODO: return status
+}
+
+	@PostMapping("/friends/accept")
+	public String acceptFriend(@RequestBody UserModel user) {
+		//TODO find sending user
+		// Validate user just email
+		//TODO Pass to userService
 	}
 
-//	@PostMapping("/friends/accept")
-//	public UserModel acceptFriend(@RequestBody UserModel user) {
-//		return userService.saveUser(user);
-//	}
-//
-//	@GetMapping("/friends")
-//	public UserModel getFriends() {
-//		return userService.getFriends();
-//	}
+	@GetMapping("/friends")
+	public ArrayList<FriendModel> getFriends() {
+		//TODO get sending user
+		//send to user service
+	}
 }

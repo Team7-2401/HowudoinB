@@ -51,4 +51,6 @@ public class UserModel{
         }
         return 0;
     }
+
+    //TODO; add friend validation, only email.
 }
