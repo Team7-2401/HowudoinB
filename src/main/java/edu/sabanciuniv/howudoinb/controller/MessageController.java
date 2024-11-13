@@ -16,18 +16,20 @@ public class MessageController {
 
 	@PostMapping("/messages/send")
 	public int sendMessage(@RequestBody MessageModel message) {
-		//TODO validate message structure (receivers and message)
-		//TODO pass to message service
-		//TODO return sent
-		return 0;
-		//return messageService.sendMessage(message);
-		//return messageService.saveMessage(message);
+		//Validation
+		int validation = message.validateSend();
+		if (validation != 0) {
+			return validation;
+		}
+
+		return messageService.sendMessage(message);
 	}
 
 	@GetMapping("/messages")
-	public MessageModel getMessages(@RequestBody UserModel receivers) {
+	public int getMessages(@RequestBody UserModel receivers) {
 		//TODO same things
 
-		return messageService.getMessages();
+		return 0;
+		//return messageService.getMessages();
 	}
 }
