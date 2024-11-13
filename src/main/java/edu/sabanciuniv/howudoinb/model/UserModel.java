@@ -18,6 +18,17 @@ public class UserModel{
     private ArrayList<FriendModel> friends;
     protected String aboutme;
 
+    private int validateEmail() {
+        if (this.email == null || this.email.isEmpty()) {
+            return 3;
+        }
+        else if (!this.email.matches("^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")) {
+            return 4;
+        }
+        return 0;
+
+    }
+
     public int validateUser(){
         if(this.name == null || this.name.isEmpty()){
             return 1;
@@ -52,5 +63,12 @@ public class UserModel{
         return 0;
     }
 
-    //TODO; add friend validation, only email.
+    //add friend validation, only email. (Should Be Done)
+    public int friendValidate(){
+       return this.validateEmail();
+    }
+
+    public int senderValidate() {
+        return this.validateEmail();
+    }
 }

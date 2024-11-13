@@ -20,10 +20,10 @@ public class UserController {
 
 		//Can a recently registered user have friends on registration?
 		int validationResponse = user.validateUser();
-		if(validationResponse == 0){
+		if (validationResponse == 0) {
 			return userService.registerUser(user);
 		}
-		else{
+		else {
 			return validationResponse;
 		}
 	}
@@ -31,34 +31,34 @@ public class UserController {
 	@PostMapping("/login")
 	public String loginUser(@RequestBody UserModel user) {
 		int validationResponse = user.loginValidate();
-		if(validationResponse == 0){
+		if (validationResponse == 0) {
 			return userService.verifyUser(user);
 		}
 		return "failed to validate user";
 	}
 
-@PostMapping("/friends/add")
-public String addFriend(@RequestHeader("Authorization") String token, @RequestBody UserModel user) {
-
-	// Extract the token if it contains a prefix like "Bearer "
-    String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
-	String email =  userService.whoSent(actualToken);
-
-	//TODO: verify passed user object (it must contain email)
-    // TODO: pass verified object to userService to add friend request
-	// TODO: return status
-}
-
-	@PostMapping("/friends/accept")
-	public String acceptFriend(@RequestBody UserModel user) {
-		//TODO find sending user
-		// Validate user just email
-		//TODO Pass to userService
+	@PostMapping("/friends/add")
+	public String addFriend(@RequestHeader("Authorization") String token, @RequestBody UserModel user) {
+		// Extract the token if it contains a prefix like "Bearer "
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+		String email = userService.whoSent(actualToken);
+		int validationResponse = user.friendValidate();
+		if (validationResponse == 0) {
+			return userService.addFriend(user, email);
+		}
+		return "failed to validate friend";
 	}
 
-	@GetMapping("/friends")
-	public ArrayList<FriendModel> getFriends() {
-		//TODO get sending user
-		//send to user service
-	}
+//	@PostMapping("/friends/accept")
+//    public String acceptFriend(@RequestBody UserModel user) {
+//	//TODO find sending user
+//	// Validate user just email
+//    //TODO Pass to userService
+//    }
+//
+//	@GetMapping("/friends")
+//	public ArrayList<FriendModel> getFriends() {
+//		//TODO get sending user
+//		//send to user service
+//	}
 }
