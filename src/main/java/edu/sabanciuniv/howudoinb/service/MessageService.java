@@ -57,4 +57,18 @@ public class MessageService {
 		}
 		return 0;
 	}
+
+	public ArrayList<MessageModel> getMessages(String receiver, String email) {
+		/* this function finds the conversation between sender and receiver */
+		System.out.println("got here");
+		//retrieve messages from the database
+        List<MessageModel> sent = messageRepository.findByReceivers_EmailAndSender_Email(receiver, email);
+		List<MessageModel> recieved = messageRepository.findByReceivers_EmailAndSender_Email(email, receiver);
+
+        //combine sent and received and sort by timestamp
+		ArrayList<MessageModel> conversation = new ArrayList<>(sent);
+		conversation.addAll(recieved);
+		conversation.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));
+		return conversation;
+	}
 }

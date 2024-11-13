@@ -1,8 +1,10 @@
 package edu.sabanciuniv.howudoinb.controller;
 
+import edu.sabanciuniv.howudoinb.model.FriendModel;
 import edu.sabanciuniv.howudoinb.model.MessageModel;
 import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.service.MessageService;
+import edu.sabanciuniv.howudoinb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,9 @@ public class MessageController {
 
 	@Autowired
 	private MessageService messageService;
+
+	@Autowired
+	private UserService userService;
 
 	@PostMapping("/messages/send")
 	public int sendMessage(@RequestBody MessageModel message) {
@@ -26,10 +31,20 @@ public class MessageController {
 	}
 
 	@GetMapping("/messages")
-	public int getMessages(@RequestBody UserModel receivers) {
-		//TODO same things
+	public ArrayList<MessageModel> getMessages(@RequestHeader("Authorization") String token ,@RequestBody UserModel receiver) {
 
-		return 0;
-		//return messageService.getMessages();
+		//validate receiver
+		int check = receiver.senderValidate(); //maybe this function should've been named messageValidate
+		if (check != 0) {
+			return null;
+		}
+
+		//find sender email
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+		String email =  userService.whoSent(actualToken);
+
+		//pass to service
+		return messageService.getMessages(receiver.getEmail(), email);
+
 	}
 }
