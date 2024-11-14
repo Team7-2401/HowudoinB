@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GroupService {
@@ -38,10 +39,53 @@ public class GroupService {
             }
         }
 
+        //add the creator to the members list if he's not there
+        if (group.getMembers() == null || group.getMembers().stream().noneMatch(userModel -> userModel.getEmail().equals(email))){
+            if(group.getMembers() == null){
+                group.setMembers(new ArrayList<UserModel>());
+            }
+            List<UserModel> members = group.getMembers();
+            members.add(user);
+            group.setMembers(members);
+        }
+
         //save group and return id
         groupRepository.save(group);
 
         return group.getGroupid();
+    }
+
+    public int addMember(int groupId, UserModel newMember, String email) {
+        //check if group exists and get it
+        GroupModel group = groupRepository.findByGroupid(groupId);
+        if (group == null){
+            return 1;
+        }
+
+        //check if user (requester) is in the group
+        if ( group.getMembers().stream().noneMatch(user -> user.getEmail().equals(email))){
+            return 2;
+        }
+
+
+        //check if user (to-be-added) exists
+        if (userRepository.findByEmail(newMember.getEmail()).size() != 1){
+            return 3;
+        } else {
+            //find the user and remove sensitive data
+            newMember = userRepository.findByEmail(newMember.getEmail()).get(0);
+            newMember.setFriends(new ArrayList<FriendModel>());
+            newMember.setPassword("");1
+        }
+
+        //get userList from group, update it and update the repo
+        List<UserModel> members = group.getMembers();
+        members.add(newMember);
+        group.setMembers(members);
+
+        groupRepository.updateMembersByGroupid(groupId, members);
+
+        return 0;
     }
 
 //    public GroupModel getGroupById(int id) {

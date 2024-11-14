@@ -1,6 +1,7 @@
 package edu.sabanciuniv.howudoinb.controller;
 
 import edu.sabanciuniv.howudoinb.model.GroupModel;
+import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.repository.UserRepository;
 import edu.sabanciuniv.howudoinb.service.GroupService;
 import edu.sabanciuniv.howudoinb.service.UserService;
@@ -33,10 +34,20 @@ public class GroupController {
 		return groupService.createGroup(group, email);
 	}
 
-//	@PostMapping("/groups/{groupId}/add-member")
-//	public GroupModel addMember(@PathVariable int groupId, @RequestBody GroupModel group) {
-//		return groupService.saveGroup(group);
-//	}
+	@PostMapping("/groups/{groupId}/add-member")
+	public int addMember(@RequestHeader("Authorization") String token, @PathVariable int groupId, @RequestBody UserModel newMember) {
+		//get request-er from token
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+		String email =  userService.whoSent(actualToken);
+
+		//verify user is valid (at least email)
+		if (newMember.senderValidate() != 0) {
+			return -1;
+		}
+
+		//pass to service
+		return groupService.addMember(groupId, newMember, email);
+	}
 //
 //	@PostMapping("/groups/{groupId}/send")
 //	public GroupModel sendMessage(@PathVariable int groupId, @RequestBody GroupModel group) {
