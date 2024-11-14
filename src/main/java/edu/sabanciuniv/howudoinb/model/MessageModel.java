@@ -17,7 +17,7 @@ public class MessageModel{
     private List<UserModel>receivers;
     private LocalDateTime timestamp;
     private boolean status;
-    private GroupModel groupid;
+    private int groupid;
 
     public int validateSend() {
         //Check if the message is empty
@@ -47,6 +47,19 @@ public class MessageModel{
         this.status = true;
 
         //message, sender and receivers are valid
+        return 0;
+    }
+
+    public int validateGroup() {
+        //check if message is empty
+        if (this.content == null || this.content.isEmpty()) {
+            return 1;
+        }
+
+        //set timestamp and status
+        this.timestamp = LocalDateTime.now();
+        this.status = true;
+
         return 0;
     }
 

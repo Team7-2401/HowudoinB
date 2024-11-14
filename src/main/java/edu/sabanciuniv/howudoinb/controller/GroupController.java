@@ -1,6 +1,7 @@
 package edu.sabanciuniv.howudoinb.controller;
 
 import edu.sabanciuniv.howudoinb.model.GroupModel;
+import edu.sabanciuniv.howudoinb.model.MessageModel;
 import edu.sabanciuniv.howudoinb.model.UserModel;
 import edu.sabanciuniv.howudoinb.repository.UserRepository;
 import edu.sabanciuniv.howudoinb.service.GroupService;
@@ -48,16 +49,7 @@ public class GroupController {
 		//pass to service
 		return groupService.addMember(groupId, newMember, email);
 	}
-//
-//	@PostMapping("/groups/{groupId}/send")
-//	public GroupModel sendMessage(@PathVariable int groupId, @RequestBody GroupModel group) {
-//		return groupService.saveGroup(group);
-//	}
-//
-//	@GetMapping("/groups/{groupId}/messages")
-//	public GroupModel getMessages(@PathVariable int groupId) {
-//		return groupService.getGroupById(groupId);
-//	}
+
 //
 //	@GetMapping("/groups/{groupId}/members")
 //	public GroupModel getMembers(@PathVariable int groupId) {

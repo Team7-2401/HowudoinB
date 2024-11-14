@@ -1,8 +1,10 @@
 package edu.sabanciuniv.howudoinb.service;
 
 import edu.sabanciuniv.howudoinb.model.FriendModel;
+import edu.sabanciuniv.howudoinb.model.GroupModel;
 import edu.sabanciuniv.howudoinb.model.MessageModel;
 import edu.sabanciuniv.howudoinb.model.UserModel;
+import edu.sabanciuniv.howudoinb.repository.GroupRepository;
 import edu.sabanciuniv.howudoinb.repository.MessageRepository;
 import edu.sabanciuniv.howudoinb.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,9 @@ public class MessageService {
 
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private GroupRepository groupRepository;
 
 	public int sendMessage(MessageModel message) {
 
@@ -70,5 +75,36 @@ public class MessageService {
 		conversation.addAll(recieved);
 		conversation.sort((m1, m2) -> m1.getTimestamp().compareTo(m2.getTimestamp()));
 		return conversation;
+	}
+
+	//group messages ---------------------------------------------------------------------------------------------------
+
+	public int sendGroupMessage(int groupId, MessageModel message, String email) {
+		//check if email is in group
+		UserModel user = userRepository.findByEmail(email).getFirst();
+		//remove sensitive information
+		user.setPassword("");
+		user.setFriends(new ArrayList<FriendModel>());
+
+		//set email as sender
+		message.setSender(user);
+
+		//check if groupid is valid and set groupid
+		GroupModel group = groupRepository.findByGroupid(groupId);
+
+		if (group == null) {
+			return -1;
+		} else {
+			message.setGroupid(group.getGroupid());
+		}
+
+		//get group members, remove sender and set as recievers
+		List<UserModel> members = group.getMembers();
+		members.remove(user);
+		message.setReceivers(members);
+
+		//add message to database
+		messageRepository.save(message);
+		return 0;
 	}
 }
