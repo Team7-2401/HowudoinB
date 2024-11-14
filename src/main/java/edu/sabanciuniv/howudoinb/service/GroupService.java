@@ -75,7 +75,7 @@ public class GroupService {
             //find the user and remove sensitive data
             newMember = userRepository.findByEmail(newMember.getEmail()).get(0);
             newMember.setFriends(new ArrayList<FriendModel>());
-            newMember.setPassword("");1
+            newMember.setPassword("");
         }
 
         //get userList from group, update it and update the repo
