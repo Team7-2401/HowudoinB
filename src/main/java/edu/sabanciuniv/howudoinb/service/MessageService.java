@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -106,5 +107,45 @@ public class MessageService {
 		//add message to database
 		messageRepository.save(message);
 		return 0;
+	}
+
+	public ArrayList<MessageModel> getGroupMessages(int groupId, String email) {
+		//check if group is valid
+		GroupModel group = groupRepository.findByGroupid(groupId);
+		if (group == null) {
+			return null;
+		}
+
+		//check if email is in group
+		boolean found = false;
+		for (UserModel member : group.getMembers()) {
+			if (member.getEmail().equals(email)) {
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			return null;
+		}
+
+		//retrieve messages from the database where email is either sender or receiver
+		List<MessageModel> messages = messageRepository.findByGroupid(groupId);
+		//filter out messages that the user is not a part of (sender or receiver)
+		ArrayList<MessageModel> conversation = new ArrayList<>();
+		for (MessageModel message : messages) {
+			if (message.getSender().getEmail().equals(email)) {
+				conversation.add(message);
+			} else {
+				for (UserModel receiver : message.getReceivers()) {
+					if (receiver.getEmail().equals(email)) {
+						conversation.add(message);
+						break;
+					}
+				}
+			}
+		}
+		//sort by timestamp
+		conversation.sort(Comparator.comparing(MessageModel::getTimestamp));
+		return conversation;
 	}
 }

@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface MessageRepository extends MongoRepository<MessageModel, String> {
     List<MessageModel> findByReceivers_EmailAndSender_Email(String receiver, String email);
+
+    List<MessageModel> findByGroupid(int groupId);
 }

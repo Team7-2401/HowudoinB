@@ -63,9 +63,14 @@ public class MessageController {
 		//pass to service
 		return messageService.sendGroupMessage(groupId, message, email);
 	}
-//
-//	@GetMapping("/groups/{groupId}/messages")
-//	public GroupModel getMessages(@PathVariable int groupId) {
-//		return groupService.getGroupById(groupId);
-//	}
+
+	@GetMapping("/groups/{groupId}/messages")
+	public ArrayList<MessageModel> getMessages(@RequestHeader("Authorization") String token, @PathVariable int groupId) {
+		//get sender from token
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+		String email =  userService.whoSent(actualToken);
+
+		//pass to service
+		return messageService.getGroupMessages(groupId, email);
+	}
 }
