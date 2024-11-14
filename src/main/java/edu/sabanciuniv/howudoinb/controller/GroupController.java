@@ -9,6 +9,8 @@ import edu.sabanciuniv.howudoinb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class GroupController {
 
@@ -50,9 +52,12 @@ public class GroupController {
 		return groupService.addMember(groupId, newMember, email);
 	}
 
-//
-//	@GetMapping("/groups/{groupId}/members")
-//	public GroupModel getMembers(@PathVariable int groupId) {
-//		return groupService.getGroupById(groupId);
-//	}
+	@GetMapping("/groups/{groupId}/members")
+	public List<UserModel> getMembers(@RequestHeader("Authorization") String token, @PathVariable int groupId) {
+		//get request-er from token
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+		String email =  userService.whoSent(actualToken);
+
+		return groupService.getGroupById(groupId);
+	}
 }

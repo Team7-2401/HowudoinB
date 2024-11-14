@@ -88,15 +88,14 @@ public class GroupService {
         return 0;
     }
 
-//    public GroupModel getGroupById(int id) {
-//	return groupRepository.findById(id).orElse(null);
-//    }
-//
-//    public GroupModel saveGroup(GroupModel group) {
-//	return groupRepository.save(group);
-//    }
-//
-//    public void deleteGroup(int id) {
-//	groupRepository.deleteById(id);
-//    }
+    public List<UserModel> getGroupById(int groupId) {
+        //check if group exists and get it
+        GroupModel group = groupRepository.findByGroupid(groupId);
+        if (group == null){
+            System.out.println("Group not found");
+            return null;
+        }
+
+        return group.getMembers();
+    }
 }
