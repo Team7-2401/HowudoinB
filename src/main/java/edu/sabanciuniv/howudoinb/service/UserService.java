@@ -158,8 +158,6 @@ public class UserService {
 		UserModel userFromDB = usersFromDB.getFirst();
 
 		ArrayList<FriendModel> friends = userFromDB.getFriends();
-		// Add this print statement after line 160
-		System.out.println("Friends: " + friends);
 
 
 		//Check if the user has any friends
