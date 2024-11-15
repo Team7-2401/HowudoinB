@@ -14,4 +14,11 @@ public interface UserRepository extends MongoRepository<UserModel, String> {
     @Query("{ 'email': ?0 }")
     @Update("{ '$set': { 'friends': ?1 } }")
     void updateFriendsByEmail(String email, List<FriendModel> friends);
+
+
+    @Query("{ 'email': ?0, 'friends.email': ?1, 'friends.status': { '$in': ['waiting', 'pending'] } }")
+    @Update("{ '$set': { 'friends.$.status': 'accepted' } }")
+    void updateFriendStatusToAccepted(String email, String friendEmail);
+
+
 }

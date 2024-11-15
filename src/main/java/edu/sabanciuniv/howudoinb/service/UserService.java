@@ -8,6 +8,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,11 +50,21 @@ public class UserService {
 		return jwtService.extractUserName(token);
 	}
 
+	//TODO Test it again. The adding friends but they someone already sent.
 	public String addFriend(UserModel user, String email){
+
+		// Check if the user is trying to add themselves
+		if (user.getEmail().equals(email)) {
+			return "You cannot add yourself as a friend";
+		}
+
 		List<UserModel> usersFromDB = userRepository.findByEmail(user.getEmail());
+
 		if (usersFromDB == null || usersFromDB.size() != 1) {
 			return "Friend not found";
 		}
+
+		//Check if they are already friends or if the user is trying to add themselves
 		UserModel userFromDB = usersFromDB.getFirst(); //friend
 
 		List<UserModel> usersFromDB2 = userRepository.findByEmail(email);
@@ -61,10 +73,29 @@ public class UserService {
 		ArrayList<FriendModel> userFriends = userFromDB2.getFriends();
 		ArrayList<FriendModel> friendFriends = userFromDB.getFriends();
 
+		// Check if they are already friends
+		boolean alreadyFriends = userFriends.stream()
+				.anyMatch(friend -> friend.getEmail().equals(user.getEmail()) && friend.getStatus().equals("accepted"));
+
+		if (alreadyFriends) {
+			return "You are already friends";
+		}
+
+		// Check if there is a pending friend request from the other user
+		boolean requestExists = userFriends.stream()
+				.anyMatch(friend -> friend.getEmail().equals(user.getEmail()) && friend.getStatus().equals("pending"));
+
+		if (requestExists) {
+			// Change status on both sender and receiver to accepted
+			userRepository.updateFriendStatusToAccepted(email, user.getEmail());
+			userRepository.updateFriendStatusToAccepted(user.getEmail(), email);
+			return "Friend request accepted";
+		}
+
 		//add each email to the other user's friends list with status pending
 		FriendModel newFriend = new FriendModel();
 		newFriend.setEmail(userFromDB.getEmail());
-		newFriend.setStatus("pending");
+		newFriend.setStatus("waiting");
 		userFriends.add(newFriend);
 
 		FriendModel newFriend2 = new FriendModel();
@@ -75,27 +106,49 @@ public class UserService {
 		userRepository.updateFriendsByEmail(userFromDB.getEmail(), friendFriends);
 		userRepository.updateFriendsByEmail(userFromDB2.getEmail(), userFriends);
 		return "Friend request sent";
-		/* function adds friend to user's friend list */
-		//TODO: add friend request to both users' friends with appropriate status
-//		return -1;
 	}
 
-	//TODO function for friends accept
-	//TODO check that the friend request is in the friends list
-	//TODO change status on both sender and receiver to accepted
+	//Function for friends accept
+	public String acceptFriend(UserModel user, String email){
+
+		// Retrieve the user who is accepting the friend request
+		List<UserModel> usersFromDB = userRepository.findByEmail(email);
+		UserModel userFromDB = usersFromDB.getFirst();
+
+
+		//Check if these is even a request
+
+		//check that the friend request is in the friends list
+
+		// Check if they are already friends
+		boolean alreadyFriends = userFromDB.getFriends().stream()
+				.anyMatch(friend -> friend.getEmail().equals(user.getEmail()) && friend.getStatus().equals("accepted"));
+
+		if (alreadyFriends) {
+			return "You are already friends";
+		}
+
+		// Check if there is a pending friend request
+		boolean requestExists = userFromDB.getFriends().stream()
+				.anyMatch(friend -> friend.getEmail().equals(user.getEmail()) && friend.getStatus().equals("pending"));
+
+		if (!requestExists) {
+			return "No pending friend request found";
+		}
+
+
+		//change status on both sender and receiver to accepted
+
+		// Update the status for the accepting user
+		userRepository.updateFriendStatusToAccepted(email, user.getEmail());
+
+		// Update the status for the friend who sent the request
+		userRepository.updateFriendStatusToAccepted(user.getEmail(), email);
+
+		return "Friend request accepted";
+	}
 
 	//TODO function for return friend list
 	//TODO go repository, find by email, find first and last names, return friends list (names) (only the accepted friends)
-
-//	public UserModel getUserById(int id) {
-//	return userRepository.findById(id).orElse(null);
-//	}
-//
-//	public UserModel saveUser(UserModel user) {
-//	return userRepository.save(user);
-//	}
-//
-//	public void deleteUser(int id) {
-//	userRepository.deleteById(id);
-//	}
+	//TODO return list of friends
 }

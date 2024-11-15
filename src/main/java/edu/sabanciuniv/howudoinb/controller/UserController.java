@@ -49,13 +49,23 @@ public class UserController {
 		return "failed to validate friend";
 	}
 
-//	@PostMapping("/friends/accept")
-//    public String acceptFriend(@RequestBody UserModel user) {
-//	//TODO find sending user
-//	// Validate user just email
-//    //TODO Pass to userService
-//    }
-//
+     @PostMapping("/friends/accept")
+	 public String acceptFriend(@RequestHeader("Authorization") String token, @RequestBody UserModel user){
+
+		String actualToken = token.startsWith("Bearer ") ? token.substring(7) : null;
+
+		 // Find sending user
+		String email = userService.whoSent(actualToken);
+		// Validate user just email
+		 int validationResponse = user.friendValidate();
+		 if (validationResponse == 0){
+
+			 //Pass to userService
+			 return userService.acceptFriend(user, email);
+		 }
+		 return "Unable to validate the friend. Ensure the email is correct and associated with a pending friend request.";
+    }
+
 //	@GetMapping("/friends")
 //	public ArrayList<FriendModel> getFriends() {
 //		//TODO get sending user
