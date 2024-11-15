@@ -66,9 +66,16 @@ public class UserController {
 		 return "Unable to validate the friend. Ensure the email is correct and associated with a pending friend request.";
     }
 
-//	@GetMapping("/friends")
-//	public ArrayList<FriendModel> getFriends() {
-//		//TODO get sending user
-//		//send to user service
-//	}
+	@GetMapping("/friends")
+	public ArrayList<FriendModel>getFriends(@RequestHeader("Authorization")String token){
+
+		String actualToken=token.startsWith("Bearer ")?token.substring(7):null;
+
+		//Get sending user
+		// Find sending user
+		String email = userService.whoSent(actualToken);
+
+		//send to user service
+		return userService.getFriends(email);
+	}
 }

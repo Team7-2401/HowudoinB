@@ -148,7 +148,47 @@ public class UserService {
 		return "Friend request accepted";
 	}
 
-	//TODO function for return friend list
-	//TODO go repository, find by email, find first and last names, return friends list (names) (only the accepted friends)
-	//TODO return list of friends
+
+	//Function for return friend list
+	public ArrayList<FriendModel>getFriends(String email){
+		// Find the user
+
+		// Retrieve the user who is accepting the friend request
+		List<UserModel> usersFromDB = userRepository.findByEmail(email);
+		UserModel userFromDB = usersFromDB.getFirst();
+
+		ArrayList<FriendModel> friends = userFromDB.getFriends();
+		// Add this print statement after line 160
+		System.out.println("Friends: " + friends);
+
+
+		//Check if the user has any friends
+		if (friends== null || friends.isEmpty()) {
+			//Return an empty list if no friends
+			return null;
+		}
+
+		//Filter accepted friends.
+		// Filter accepted friends and add email
+		ArrayList<FriendModel> acceptedFriends = new ArrayList<>();
+		for (FriendModel friend : friends) {
+			if ("accepted".equals(friend.getStatus())) {
+				friend.setEmail(friend.getEmail());
+				acceptedFriends.add(friend);
+			}
+		}
+
+		//Set the name and last name of the friends.
+		for(int i = 0; i < acceptedFriends.size(); i++) {
+			UserModel friendFromDB = userRepository.findByEmail(acceptedFriends.get(i).getEmail()).getFirst();
+			acceptedFriends.get(i).setName(friendFromDB.getName());
+			acceptedFriends.get(i).setLastName(friendFromDB.getLastName());
+		}
+
+
+		//Return list of friends
+		//Go repository, find by email, find first and last names, return friends list (names) (only the accepted friends)
+		return acceptedFriends;
+
+	}
 }
